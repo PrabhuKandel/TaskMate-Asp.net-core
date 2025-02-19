@@ -1,0 +1,102 @@
+﻿@model Task_Manager.Models.Task
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<div class="container mt-4">
+    <h1>Create Task</h1>
+    <hr />
+
+    <form asp-action="Create" class="w-50 ">
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="Name" class="form-label"></label>
+                    <input asp-for="Name" class="form-control" />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="Description" class="form-label"></label>
+                    <textarea asp-for="Description" class="form-control"></textarea>
+                    <span asp-validation-for="Description" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="Status" class="form-label"></label>
+                    <select asp-for="Status" class="form-select">
+                        <option value="0">Pending</option>
+                        <option value="1">Completed</option>
+                    </select>
+                    <span asp-validation-for="Status" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="Priority" class="form-label"></label>
+                    <select asp-for="Priority" class="form-select" asp-items="Html.GetEnumSelectList<Task_Manager.Models.TaskPriority>()"></select>
+                    <span asp-validation-for="Priority" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="CreatedAt" class="form-label"></label>
+                    <input asp-for="CreatedAt" class="form-control" id="createdAt" type="datetime-local" />
+                    <span asp-validation-for="CreatedAt" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group mb-3">
+                    <label asp-for="DueDate" class="form-label"></label>
+                    <input asp-for="DueDate" class="form-control" id="dueDate" type="datetime-local" />
+                    <span asp-validation-for="DueDate" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        
+            <div class=" d-flex gap-3 mt-3 justify-content-end">
+                <div class="">
+                    <a asp-action="Index" class="btn btn-primary  btn-sm">Back to List</a>
+                </div>
+                <div class="">
+                    <input type="submit" value="Create Task" class="btn btn-success  btn-sm" />
+                </div>
+            </div>
+   
+    </form>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+    <script>
+        // JavaScript to set the current date and time as the default value
+        window.onload = function () {
+            var currentDate = new Date();
+            var formattedDate = currentDate.toISOString().slice(0, 16); // Format to "yyyy-MM-ddThh:mm"
+
+            // Set the min date and time to current date and time
+            var dateInput = document.getElementById("createdAt");   
+            var dueDate = document.getElementById("dueDate");
+              
+            dateInput.value = formattedDate;
+            dateInput.setAttribute("min", formattedDate); // Prevent selecting past dates
+            dueDate.setAttribute("min", formattedDate); // Prevent selecting past dates
+        };
+    </script>
+}

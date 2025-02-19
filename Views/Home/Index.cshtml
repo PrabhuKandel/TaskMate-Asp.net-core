@@ -1,0 +1,55 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+
+
+}
+
+<div class="head-title">
+	<div class="left">
+		<h1>Dashboard</h1>
+		<ul class="breadcrumb">
+			<li>
+				<a href="#">Dashboard</a>
+			</li>
+			<li><i class='bx bx-chevron-right'></i></li>
+			<li>
+				<a class="active" href="#">Home</a>
+			</li>
+		</ul>
+	</div>
+</div>
+
+<ul class="box-info">
+	<li>
+		<i class="fa-solid  fa-list-check"></i>
+		<span class="text">
+			<h3>Total Tasks</h3>
+			<p> @ViewBag.TotalTasks</p>
+		</span>
+	</li>
+	<li>
+		<i class="fa-solid fa-hourglass-half"></i>
+
+		<span class="text">
+			<h3>Pending Tasks</h3>
+			<p> @ViewBag.PendingTasks</p>
+		</span>
+	</li>
+	<li>
+		<i class="fa-solid fa-check-circle"></i>
+
+		<span class="text">
+			<h3>Completed Tasks</h3>
+			<p> @ViewBag.CompletedTasks</p>
+		</span>
+	</li>
+	<li>
+		<i class="fa-solid fa-triangle-exclamation"></i>
+
+		<span class="text">
+			<h3>OverDue Tasks</h3>
+			<p>Total Sales</p>
+		</span>
+	</li>
+</ul>
+	</div>
