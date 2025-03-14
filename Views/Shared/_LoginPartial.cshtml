@@ -1,0 +1,16 @@
+﻿@using Microsoft.AspNetCore.Identity
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+
+    @if (SignInManager.IsSignedIn(User))
+    {
+    
+            
+         var user = await UserManager.GetUserAsync(User);
+    <p class="mb-0 user-info">Hello   <span class=" text-primary ml-1 fs-4 fw-bold text-uppercase">@user.FirstName</span></p>
+    
+ 
+    }
+

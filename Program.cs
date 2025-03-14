@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Task_Manager.Models;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -7,7 +9,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews().AddRazorRuntimeCompilation();
 // Add services to the container.
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))); // Use SQL Server
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.AddDefaultIdentity<ApplicationUser>(options => {options.SignIn.RequireConfirmedAccount = false; options.ClaimsIdentity.UserIdClaimType = ClaimTypes.NameIdentifier; }).AddEntityFrameworkStores<ApplicationDbContext>();
 
 
 var app = builder.Build();
@@ -25,10 +30,13 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapRazorPages();
 
 app.Run();

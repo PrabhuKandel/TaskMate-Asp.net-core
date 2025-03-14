@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Task_Manager.Models.Task>
+﻿@model IEnumerable<Task_Manager.Models.DTOs.TaskDto>
 
 @{
     ViewData["Title"] = "Index";
@@ -55,17 +55,16 @@
 
                    <p>
                         Status:
-                         <span class="badge status-badge @(task.Status == Task_Manager.Models.TaskStatus.Completed ? "bg-success" : "bg-warning")"
-                                  data-task-id="@task.Id">
-                                @task.Status.ToString()
-                       </span>
-                 </p>
-                <p>
+                            <span class="badge status-badge" data-task-id="@task.Id" data-status="@task.Status">@task.Status.ToString()  </span>
+                        </p>
+                    <p>
                     Priority:  <span class="badge @(task.Priority == Task_Manager.Models.TaskPriority.High ? "bg-danger" : task.Priority == Task_Manager.Models.TaskPriority.Low ? "bg-success" : "bg-warning")">
                         @task.Priority.ToString()
                     </span>
-                </p>
-                <h6 class="card-subtitle mb-2 mt-2 text-muted">Due Date: @task.DueDate?.ToString("yyyy-MM-dd")</h6>
+                    </p>
+                    
+                        <h6 class="card-subtitle mb-2 mt-2 text-muted">Created At: @task.CreatedTimeAgo</h6>
+                <h6 class="card-subtitle mb-2 mt-2 text-muted">Due Date: @task.DueDateUntil</h6>
             </div>
 
             <div class="d-flex mt-3 justify-content-end">
@@ -118,43 +117,68 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function () {
+
+            const statusMap = {
+                "Pending": { class: "bg-warning", label: "Pending", value: 0 },
+               "Completed": { class: "bg-success", label: "Completed", value: 1 },
+                "Overdue": { class: "bg-danger", label: "Overdue", value: 2 },
+            };
+            // Reverse lookup to map numeric status to strings
+            const reverseStatusMap = {
+                0: "Pending",
+                1: "Completed",
+                2: "Overdue",
+            };
+
+            // Apply correct badge color based on status
+            document.querySelectorAll('.status-badge').forEach(badge => {
+                const status = (badge.dataset.status).toString().trim(); 
+                badge.classList.add(statusMap[status].class); 
+            });
+
+
+
             // When the checkbox is changed
             $(document).on('change', '.status-checkbox', function () {
          
-                var taskId = $(this).data("task-id"); // Get task ID
-                var status = $(this).prop("checked") ? 1 : 0; // 1 for Completed, 0 for Pending
-
-                // AJAX request using GET method
+                const  taskId = $(this).data("task-id"); // Get task ID
+                const isChecked = $(this).prop("checked");
+             
+         
                 $.ajax({
                     url: '/Task/UpdateStatus',
-                    method: 'GET', // Change from POST to GET
-                    data: {
-                        taskId: taskId,
-                        status: status
-                    },
+                    method: 'POST',
+              
+                    data: {taskId:taskId,isChecked:isChecked},
                     success: function (response) {
+                            console.log(response)   
                         if (response.success) {
                             console.log("Status updated successfully");
                             // Select the specific badge using taskId
-                            var badge = $(".status-badge[data-task-id='" + taskId + "']");
+                            updateBadge(taskId, response.status);
 
-                            // Update the badge text and color
-                            badge.text(status === 1 ? "Completed" : "Pending")
-                                .removeClass("bg-warning bg-success bg-danger")
-                                .addClass(status === 1 ? "bg-success" : "bg-warning");
                         } else {
                             console.log("Failed to update status");
                         }
                     },
                     error: function (xhr, status, error) {
                         console.log("Error while updating status");
-                        console.log(xhr.responseJSON);
+                        console.log(xhr,status,error);
                         alert("Error: " + xhr.responseJSON.message); // Display error message from backend
                     }
                 });
             });
 
+            // Update the status badge
+            function updateBadge(taskId, newStatus) {
+                const statusKey = reverseStatusMap[newStatus];
+                const badge = $(".status-badge[data-task-id='" + taskId + "']");
+                const { class: newClass, label } = statusMap[statusKey];
 
+                badge.text(label)
+                    .removeClass("bg-warning bg-success bg-danger")
+                    .addClass(newClass);
+            }
             //to delete task
             var taskIdToDelete = null;
 
@@ -236,6 +260,7 @@
                         //$('#taskListContainer').fadeOut();  // Fade out the old task list before showing the new one
                     },
                     success: function (response) {
+                 
                         $('#taskListContainer').html(response);  // Replace the old task list with the new one
                          
                     },

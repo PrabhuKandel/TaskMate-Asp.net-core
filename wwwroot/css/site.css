@@ -242,6 +242,12 @@ body {
         margin-right: auto;
     }
 
+        #content .user-info {
+        
+            margin-left:auto;
+         
+        }
+
         #content nav form .form-input {
             display: flex;
             align-items: center;

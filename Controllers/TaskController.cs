@@ -1,30 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Task_Manager.Models;
-using Microsoft.VisualBasic;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
+using Task_Manager.Models.DTOs;
+using Task_Manager.Utilities;
 
 namespace Task_Manager.Controllers
 {
+    [Authorize]
     public class TaskController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public TaskController(ApplicationDbContext context)
+        public TaskController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Task
         public async Task<IActionResult> Index(Task_Manager.Models.TaskStatus ? status, Task_Manager.Models. TaskPriority? priority, string? dueDate)
         {
-            var tasks = _context.Tasks.AsQueryable();
+            String userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
+            if (userId == null)
+            {
+                return Unauthorized(); // Ensure user is logged in
+            }
+            await TimeAgoHelper.UpdateOverdueTasksAsync(_context, userId);
+
+            var tasks = _context.Tasks.AsQueryable();
+             tasks =    _context.Tasks.Where(t => t.UserId == userId);
             // Apply Status Filter
             if (status.HasValue)
             {
@@ -44,13 +53,24 @@ namespace Task_Manager.Controllers
                     ? tasks.OrderBy(t => t.DueDate)
                     : tasks.OrderByDescending(t => t.DueDate);
             }
-           //return Json(new { success = true, data = tasks.ToList() });
+            //return Json(new { success = true, data = tasks.ToList() });
+
+            var taskDTOs = await tasks.Select(t => new TaskDto
+            {
+                Id = t.Id,
+                Name = t.Name,
+                Status = t.Status,
+                Priority = t.Priority,
+                DueDate = t.DueDate, // Format due date as needed
+                CreatedAt = t.CreatedAt
+
+            }).ToListAsync();
 
            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
            {
-                return PartialView("_TaskListPartial", tasks.ToList()); // Return partial view for AJAX
+                return PartialView("_TaskListPartial", taskDTOs); // Return partial view for AJAX
             }
-            return View(await tasks.OrderByDescending(t => t.CreatedAt).ToListAsync());
+            return View(taskDTOs);
 
         }
 
@@ -83,16 +103,32 @@ namespace Task_Manager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Status,Priority,CreatedAt,DueDate")] Task_Manager.Models.Task task)
+        public async Task<IActionResult> Create(Task_Manager.Models.Task task)
         {
+            // ✅ Assign UserId internally
+            task.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+
+            //task.CreatedAt = DateTime.SpecifyKind(task.CreatedAt, DateTimeKind.Utc);
+            //task.DueDate = DateTime.SpecifyKind(task.DueDate, DateTimeKind.Utc);
+            // If the times are already in Asia/Kathmandu time, convert them to UTC before saving.
+            task.CreatedAt = task.CreatedAt.ToUniversalTime();  // Convert to UTC
+            task.DueDate = task.DueDate.ToUniversalTime();      // Convert to UTC
+
+
+            ModelState.Remove(nameof(task.UserId));
             if (ModelState.IsValid)
             {
+               
+
                 _context.Add(task);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(task);
         }
+
 
         // GET: Task/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -102,7 +138,15 @@ namespace Task_Manager.Controllers
                 return NotFound();
             }
 
-            var task = await _context.Tasks.FindAsync(id);
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == id && t.UserId == user.Id);
+            task.CreatedAt = task.CreatedAt.ToLocalTime();
+            task.DueDate = task.DueDate.ToLocalTime();
             if (task == null)
             {
                 return NotFound();
@@ -115,64 +159,72 @@ namespace Task_Manager.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Status,Priority,CreatedAt,DueDate")] Task_Manager.Models.Task task)
+        public async Task<IActionResult> Edit(int id,  Task_Manager.Models.Task task)
         {
             if (id != task.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            task.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            // If the times are already in Asia/Kathmandu time, convert them to UTC before saving.
+            task.CreatedAt = task.CreatedAt.ToUniversalTime();  // Convert to UTC
+            task.DueDate = task.DueDate.ToUniversalTime();      // Convert to UTC
+
+
+
+            if (!ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(task);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TaskExists(task.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                return View(task);
             }
-            return View(task);
+        
+               
+                _context.Update(task);
+                 await _context.SaveChangesAsync();
+                 return RedirectToAction(nameof(Index));
+            
+    
         }
 
-        [HttpGet]
-        public async Task<IActionResult> UpdateStatus(int taskId, Task_Manager.Models.TaskStatus status)
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(int taskId, bool isChecked)
         {
-            if (taskId <= 0)
-            {
-                return BadRequest(new { success = false, message = "Invalid task ID" });
-            }
+     
 
             var task = await _context.Tasks.FindAsync(taskId);
+
             if (task == null)
             {
                 return NotFound(new { success = false, message = "Task not found" });
             }
+            if(isChecked)
+            {
+                task.Status = Models.TaskStatus.Completed;
+            }
+            else
+            {
+                task.Status = task.DueDate < DateTime.Now.ToUniversalTime() ? Models.TaskStatus.Overdue : Models.TaskStatus.Pending;
+            }
 
-            task.Status = status;
             await _context.SaveChangesAsync();
 
-            return Json(new { success = true, message = "Status updated successfully" });
+            return Json(new { success = true, status = task.Status });
         }
 
 
-        [HttpPost] // Ensure it's a POST request
+        [HttpPost]
         public async Task<IActionResult> Delete(int taskId)
         {
-            var task = await _context.Tasks.FindAsync(taskId);
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var task = await _context.Tasks.FirstOrDefaultAsync(t => t.Id == taskId && t.UserId == user.Id);
             if (task == null)
             {
-                return Json(new { success = false, message = "Task not found" });
+                return Json(new { success = false, message = "Task not found or you do not have permission to delete it." });
             }
 
             _context.Tasks.Remove(task);
@@ -182,7 +234,8 @@ namespace Task_Manager.Controllers
         }
 
 
-       
+
+
 
         private bool TaskExists(int id)
         {

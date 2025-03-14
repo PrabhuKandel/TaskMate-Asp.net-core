@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Task_Manager.Models
 {
@@ -23,12 +25,22 @@ namespace Task_Manager.Models
 		public TaskPriority Priority { get; set; } = TaskPriority.Medium; // Default: Medium
 
 		[Required]
-		public DateTime CreatedAt { get; set; } = DateTime.UtcNow; // Auto-set creation date
+		public DateTime CreatedAt { get; set; } 
 
-		public DateTime? DueDate { get; set; } // Nullable: Task may not have a deadline
+        [Required]
+        [DueDateGreaterThanCreatedAt(ErrorMessage = "Due date must be greater than created date.")]
+        public DateTime DueDate { get; set; } 
 
-	
-	}
+        // ✅ Foreign Key to ApplicationUser
+        [Required]
+        public string UserId { get; set; } // Stores the User ID from IdentityUser
+
+        [ForeignKey("UserId")]
+        [ValidateNever]
+        public ApplicationUser? User { get; set; }  // ✅ Navigation Property
+
+
+    }
 
 	public enum TaskStatus
 	{
@@ -44,4 +56,28 @@ namespace Task_Manager.Models
 		High
 		
 	}
+    public class DueDateGreaterThanCreatedAt : ValidationAttribute
+    {
+        protected override ValidationResult IsValid(object value, ValidationContext validationContext)
+        {
+            var task = validationContext.ObjectInstance as Task;  // Access the full object (Task)
+
+            if (task != null)
+            {
+                // Check if DueDate is greater than CreatedAt
+                if (task.DueDate <= task.CreatedAt)
+                {
+                   
+                    // Return an error if validation fails
+                    return new ValidationResult("Due date must be greater than created date.");
+                }
+            }
+
+            // If no validation errors, return Success
+            return ValidationResult.Success;
+        }
+    }
+
+
+
 }

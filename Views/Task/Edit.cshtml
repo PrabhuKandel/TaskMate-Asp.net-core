@@ -9,6 +9,7 @@
     <hr />
 
     <form asp-action="Edit" class="w-50 ">
+        <input type="hidden" asp-for="UserId" />
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
 
         <div class="row">
@@ -52,6 +53,13 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group mb-3">
+                    <label asp-for="CreatedAt" class="form-label"></label>
+                    <input asp-for="CreatedAt" class="form-control" id="createdAt" type="datetime-local" readonly />
+                    <span asp-validation-for="CreatedAt" class="text-danger"></span>
+                </div>
+                     </div>
+            <div class="col-md-6">
+                <div class="form-group mb-3">
                     <label asp-for="DueDate" class="form-label"></label>
                     <input asp-for="DueDate" class="form-control" id="dueDate" type="datetime-local" />
                     <span asp-validation-for="DueDate" class="text-danger"></span>
@@ -68,22 +76,26 @@
                 <input type="submit" value="Edit Task" class="btn btn-success  btn-sm" />
             </div>
         </div>
-
     </form>
 </div>
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
     <script>
         // JavaScript to set the current date and time as the default value
-        window.onload = function () {
-            var currentDate = new Date();
-            var formattedDate = currentDate.toISOString().slice(0, 16); // Format to "yyyy-MM-ddThh:mm"
+    /**        window.onload = function () {
+            const createdAtUtc = "@Model.CreatedAt";
 
-            // Set the min date and time to current date and time
-           
-            var dueDate = document.getElementById("dueDate");
-            dueDate.setAttribute("min", formattedDate); // Prevent selecting past dates
+            const kathmanduTime = luxon.DateTime.fromISO(createdAtUtc, { zone: 'utc' }).setZone('Asia/Kathmandu');
+            const formattedCreatedAt = kathmanduTime.toFormat("yyyy-MM-dd'T'HH:mm");
 
-        };
+            const createdAtInput = document.getElementById("createdAt");
+            createdAtInput.value = formattedCreatedAt;
+
+            const currentLocalTime = luxon.DateTime.now().setZone('Asia/Kathmandu').toFormat("yyyy-MM-dd'T'HH:mm");
+            const dueDate = document.getElementById("dueDate");
+            dueDate.setAttribute("min", currentLocalTime);
+
+
+        };**/
     </script>
 }

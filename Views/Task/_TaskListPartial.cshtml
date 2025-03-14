@@ -1,7 +1,6 @@
 ﻿@{
     @foreach (var task in Model)
     {
-
         <div class="card mb-3  mx-3 col-md-3" data-task-id="@task.Id" style="width: 18rem; background:#F9F9F9;">
             <div class="card-body">
                 <div class="d-flex justify-content-between">
@@ -13,17 +12,16 @@
 
                     <p>
                         Status:
-                        <span class="badge status-badge @(task.Status == Task_Manager.Models.TaskStatus.Completed ? "bg-success" : "bg-warning")"
-                              data-task-id="@task.Id">
-                            @task.Status.ToString()
-                        </span>
+                        <span class="badge status-badge" data-task-id="@task.Id" data-status="@task.Status">@task.Status.ToString()  </span>
                     </p>
                     <p>
                         Priority:  <span class="badge @(task.Priority == Task_Manager.Models.TaskPriority.High ? "bg-danger" : task.Priority == Task_Manager.Models.TaskPriority.Low ? "bg-success" : "bg-warning")">
                             @task.Priority.ToString()
                         </span>
                     </p>
-                    <h6 class="card-subtitle mb-2 mt-2 text-muted">Due Date: @task.DueDate?.ToString("yyyy-MM-dd")</h6>
+
+                    <h6 class="card-subtitle mb-2 mt-2 text-muted">Created At: @task.CreatedTimeAgo</h6>
+                    <h6 class="card-subtitle mb-2 mt-2 text-muted">Due Date: @task.DueDateUntil</h6>
                 </div>
 
                 <div class="d-flex mt-3 justify-content-end">
