@@ -3,86 +3,113 @@
 @{
     ViewData["Title"] = "Index";
 }
-<div class="d-flex justify-content-between align-items-center mb-5">
-    <h1 class="mb-0">Task List</h1>
-    <div class="sorting-options d-flex gap-3">
-        <!-- Sort By Status Dropdown -->
-        <!-- Sort By Status Dropdown -->
-        <select class="form-select form-select-sm" id="statusSort">
-            <option value="">Select Status</option>
-            <option value="0" selected="@(Context.Request.Query["status"] == "Pending" ? "selected" : null)">Pending</option>
-            <option value="1" selected="@(Context.Request.Query["status"] == "Completed" ? "selected" : null)">Completed</option>
-            <option value="2" selected="@(Context.Request.Query["status"] == "Overdue" ? "selected" : null)">Overdue</option>
-        </select>
-
-        <!-- Sort By Priority Dropdown -->
-        <select class="form-select form-select-sm" id="prioritySort">
-            <option value="">Select Priority</option>
-            <option value="0" selected="@(Context.Request.Query["priority"] == "Low" ? "selected" : null)">Low</option>
-            <option value="1" selected="@(Context.Request.Query["priority"] == "Medium" ? "selected" : null)">Medium</option>
-            <option value="2" selected="@(Context.Request.Query["priority"] == "High" ? "selected" : null)">High</option>
-        </select>
-
-        <!-- Sort By Due Date Dropdown (Asc/Desc) -->
-        <select class="form-select form-select-sm" id="dueDateSort">
-            <option value="">Select Due Date</option>
-            <option value="asc" selected="@(Context.Request.Query["dueDate"] == "asc" ? "selected" : null)">Sooner - Later</option>
-            <option value="desc" selected="@(Context.Request.Query["dueDate"] == "desc" ? "selected" : null)">Later - Sooner</option>
-        </select>
 
 
-        <!-- Reset Button -->
-        <button class="btn btn-secondary btn-sm" id="resetButton" >Reset</button>
-    </div>
-    <a asp-action="Create" class="btn btn-primary w-auto">Create Task</a>
-</div>
+<div class="row mb-2">
+    <!-- Left-Aligned Heading and Centered Sorting Options -->
+    <div class="col-12 d-flex justify-content-between align-items-center">
+        <h1 class="mb-2 text-primary d-flex align-items-center gap-2">
+            <i class="fa-solid fa-list-check"></i> Task List
+        </h1>
+        <!-- Centered Sorting Options -->
+        <div class="sorting-options d-flex gap-3 mx-auto">
+            <!-- Sort By Status Dropdown -->
+            <select class="form-select form-select-sm" id="statusSort">
+                <option value="">Select Status</option>
+                <option value="0" selected="@(Context.Request.Query["status"] == "Pending" ? "selected" : null)">Pending</option>
+                <option value="1" selected="@(Context.Request.Query["status"] == "Completed" ? "selected" : null)">Completed</option>
+                <option value="2" selected="@(Context.Request.Query["status"] == "Overdue" ? "selected" : null)">Overdue</option>
+            </select>
 
+            <!-- Sort By Priority Dropdown -->
+            <select class="form-select form-select-sm" id="prioritySort">
+                <option value="">Select Priority</option>
+                <option value="0" selected="@(Context.Request.Query["priority"] == "Low" ? "selected" : null)">Low</option>
+                <option value="1" selected="@(Context.Request.Query["priority"] == "Medium" ? "selected" : null)">Medium</option>
+                <option value="2" selected="@(Context.Request.Query["priority"] == "High" ? "selected" : null)">High</option>
+            </select>
 
+            <!-- Sort By Due Date Dropdown -->
+            <select class="form-select form-select-sm" id="dueDateSort">
+                <option value="">Select Due Date</option>
+                <option value="asc" selected="@(Context.Request.Query["dueDate"] == "asc" ? "selected" : null)">Sooner - Later</option>
+                <option value="desc" selected="@(Context.Request.Query["dueDate"] == "desc" ? "selected" : null)">Later - Sooner</option>
+            </select>
 
-<div class="container ">
-    <div class="row" id="taskListContainer">
-@foreach (var task in Model)
-{
-
-         <div class="card mb-3  mx-3 col-md-3" data-task-id="@task.Id" style="width: 18rem; background:#F9F9F9;">
-        <div class="card-body">
-            <div class="d-flex justify-content-between">
-                <h5 class="card-title">@task.Name</h5>
-                <input type="checkbox"    class="status-checkbox" data-task-id="@task.Id" @(task.Status == Task_Manager.Models.TaskStatus.Completed ? "checked" : "") />
-            </div>
-
-            <div>
-
-                   <p>
-                        Status:
-                            <span class="badge status-badge" data-task-id="@task.Id" data-status="@task.Status">@task.Status.ToString()  </span>
-                        </p>
-                    <p>
-                    Priority:  <span class="badge @(task.Priority == Task_Manager.Models.TaskPriority.High ? "bg-danger" : task.Priority == Task_Manager.Models.TaskPriority.Low ? "bg-success" : "bg-warning")">
-                        @task.Priority.ToString()
-                    </span>
-                    </p>
-                    
-                        <h6 class="card-subtitle mb-2 mt-2 text-muted">Created At: @task.CreatedTimeAgo</h6>
-                <h6 class="card-subtitle mb-2 mt-2 text-muted">Due Date: @task.DueDateUntil</h6>
-            </div>
-
-            <div class="d-flex mt-3 justify-content-end">
-                <a asp-action="Edit" asp-route-id="@task.Id" class="card-link text-primary">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                </a>
-                        <!--<a asp-action="Delete" asp-route-id="@task.Id" class="card-link text-danger">
-                    <i class="fa-solid fa-trash"></i>
-                </a>
-                        -->
-                        <a  href="#" class="card-link delete-button text-danger" data-task-id="@task.Id"> <i class="fa-solid fa-trash"></i></a>
-
-            </div>
+            <!-- Reset Button -->
+            <button class="btn btn-secondary btn-sm" id="resetButton">Reset</button>
         </div>
     </div>
-}
+</div>
+
+<div class="d-flex justify-content-end">
+    <!-- Right-Aligned "New Task" Button -->
+    <a asp-action="Create" asp-controller="Task" class="btn btn-success text-white d-flex align-items-center gap-2  px-3 py-1 mb-3">
+        <i class="fa-solid fa-plus"></i>
+        <span class="d-none d-md-inline">New Task</span>
+    </a>
+</div>
+
+
+
+
+<div class="container mx-4">
+    <div class="row" id="taskListContainer">
+        @foreach (var task in Model)
+        {
+
+            <div class="card mb-3  mx-3 col-md-3 shadow-sm rounded-4" data-task-id="@task.Id" style="width: 19rem; background:linear-gradient(to bottom right, #ffffff, #f3f4f6); border: none;">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <h5 class="card-title fw-bold text-dark">@task.Name</h5>
+                        <input type="checkbox" class="status-checkbox" data-task-id="@task.Id" @(task.Status == Task_Manager.Models.TaskStatus.Completed ? "checked" : "") />
+                    </div>
+
+                    <div>
+                        <p class="mb-2">
+                            <i class="fa-solid fa-spinner me-1"></i>
+                            <strong>Status:</strong>
+                            <span class="badge rounded-pill status-badge" data-task-id="@task.Id" data-status="@task.Status">@task.Status.ToString()</span>
+                        </p>
+                        <p class="mb-2">
+                            <i class="fa-solid fa-flag me-1"></i>
+                            <strong>Priority:</strong>
+                            <span class="badge rounded-pill @(task.Priority == Task_Manager.Models.TaskPriority.High ? "bg-danger" : task.Priority == Task_Manager.Models.TaskPriority.Low ? "bg-success" : "bg-warning")">
+                                @task.Priority.ToString()
+                            </span>
+                        </p>
+                        <p class="mb-2 text-muted">
+                            <i class="fa-solid fa-calendar-check me-1"></i>
+                            <strong>Created At:</strong> @task.CreatedTimeAgo
+                        </p>
+                        <p class="text-muted">
+                            <i class="fa-solid fa-calendar-day me-1"></i>
+                            <strong>Due Date:</strong> @task.DueDateUntil
+                        </p>
+                    </div>
+                    <div class="d-flex mt-3 justify-content-between">
+                        <!-- View Icon (Left) -->
+                        <a asp-action="Details" asp-route-id="@task.Id" class="card-link text-info">
+                            <i class="fa-solid fa-eye"></i>
+                        </a>
+
+                        <!-- Edit and Delete Icons (Right) -->
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@task.Id" class="card-link text-primary">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="#" class="card-link delete-button text-danger" data-task-id="@task.Id">
+                                <i class="fa-solid fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        }
     </div>
 </div>
+
 
 <!-- Modal -->
 <!-- Delete Confirmation Modal -->
@@ -123,6 +150,15 @@
                "Completed": { class: "bg-success", label: "Completed", value: 1 },
                 "Overdue": { class: "bg-danger", label: "Overdue", value: 2 },
             };
+
+            const statusUI = ()=>{
+                // Apply correct badge color based on status
+                document.querySelectorAll('.status-badge').forEach(badge => {
+                    const status = (badge.dataset.status).toString().trim();
+                    badge.classList.add(statusMap[status].class);
+                });
+
+            }
             // Reverse lookup to map numeric status to strings
             const reverseStatusMap = {
                 0: "Pending",
@@ -130,11 +166,7 @@
                 2: "Overdue",
             };
 
-            // Apply correct badge color based on status
-            document.querySelectorAll('.status-badge').forEach(badge => {
-                const status = (badge.dataset.status).toString().trim(); 
-                badge.classList.add(statusMap[status].class); 
-            });
+            statusUI();
 
 
 
@@ -220,11 +252,17 @@
                 // Function to update sorting based on dropdown selections
             // Function to update sorting based on dropdown selections
             function updateSorting() {
+                console.log("search btn clicked");
+
+
                 // Maps for converting numeric values to string options
                 const statusMap = { 0: "Pending", 1: "Completed", 2: "Overdue" };
                 const priorityMap = { 0: "Low", 1: "Medium", 2: "High" };
 
-                // Get current values of the dropdowns
+                // Get the search query value
+                let searchQuery = $('#taskSearch').val();
+
+                // Get current values of the 
                 let statusValue = $('#statusSort').val();
                 let priorityValue = $('#prioritySort').val();
                 let dueDate = $('#dueDateSort').val();
@@ -245,6 +283,11 @@
                 if (dueDate) {
                     queryParams.set('dueDate', dueDate);  // Add or update dueDate
                 }
+                if (searchQuery) {
+                    queryParams.set('search', searchQuery);  // Add or update search query
+                } else {
+                    queryParams.delete('search');  // Remove search parameter if input is empty
+                }
 
                 // Construct the new URL with updated query parameters
                 let updatedUrl = currentUrl + '?' + queryParams.toString();
@@ -262,6 +305,8 @@
                     success: function (response) {
                  
                         $('#taskListContainer').html(response);  // Replace the old task list with the new one
+                        statusUI();
+                       
                          
                     },
                    
@@ -276,6 +321,7 @@
                 $('#statusSort').val('');
                 $('#prioritySort').val('');
                 $('#dueDateSort').val('');
+                $('#taskSearch').val('');
 
                 // Reset the URL without query parameters
               //  history.pushState(null, null, '/Task/Index');
@@ -288,9 +334,11 @@
             // Attach event listeners using jQuery
             $('#statusSort, #prioritySort, #dueDateSort').on('change', updateSorting);
             $('#resetButton').on('click', resetSorting);
+            $('#searchButton').on('click', updateSorting);
 
             });
-
+      
+        
         
     </script>
 }

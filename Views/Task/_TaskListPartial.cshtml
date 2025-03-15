@@ -1,41 +1,57 @@
 ﻿@{
     @foreach (var task in Model)
     {
-        <div class="card mb-3  mx-3 col-md-3" data-task-id="@task.Id" style="width: 18rem; background:#F9F9F9;">
+
+        <div class="card mb-3  mx-3 col-md-3 shadow-sm rounded-4" data-task-id="@task.Id" style="width: 19rem; background:linear-gradient(to bottom right, #ffffff, #f3f4f6); border: none;">
             <div class="card-body">
-                <div class="d-flex justify-content-between">
-                    <h5 class="card-title">@task.Name</h5>
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h5 class="card-title fw-bold text-dark">@task.Name</h5>
                     <input type="checkbox" class="status-checkbox" data-task-id="@task.Id" @(task.Status == Task_Manager.Models.TaskStatus.Completed ? "checked" : "") />
                 </div>
 
                 <div>
-
-                    <p>
-                        Status:
-                        <span class="badge status-badge" data-task-id="@task.Id" data-status="@task.Status">@task.Status.ToString()  </span>
+                    <p class="mb-2">
+                        <i class="fa-solid fa-spinner me-1"></i>
+                        <strong>Status:</strong>
+                        <span class="badge rounded-pill status-badge" data-task-id="@task.Id" data-status="@task.Status">@task.Status.ToString()</span>
                     </p>
-                    <p>
-                        Priority:  <span class="badge @(task.Priority == Task_Manager.Models.TaskPriority.High ? "bg-danger" : task.Priority == Task_Manager.Models.TaskPriority.Low ? "bg-success" : "bg-warning")">
+                    <p class="mb-2">
+                        <i class="fa-solid fa-flag me-1"></i>
+                        <strong>Priority:</strong>
+                        <span class="badge rounded-pill @(task.Priority == Task_Manager.Models.TaskPriority.High ? "bg-danger" : task.Priority == Task_Manager.Models.TaskPriority.Low ? "bg-success" : "bg-warning")">
                             @task.Priority.ToString()
                         </span>
                     </p>
+                    <p class="mb-2 text-muted">
+                        <i class="fa-solid fa-calendar-check me-1"></i>
+                        <strong>Created At:</strong> @task.CreatedTimeAgo
+                    </p>
+                    <p class="text-muted">
+                        <i class="fa-solid fa-calendar-day me-1"></i>
+                        <strong>Due Date:</strong> @task.DueDateUntil
+                    </p>
+                </div>
+                <div class="d-flex mt-3 justify-content-between">
+                    <!-- View Icon (Left) -->
+                    <a asp-action="Details" asp-route-id="@task.Id" class="card-link text-info">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
 
-                    <h6 class="card-subtitle mb-2 mt-2 text-muted">Created At: @task.CreatedTimeAgo</h6>
-                    <h6 class="card-subtitle mb-2 mt-2 text-muted">Due Date: @task.DueDateUntil</h6>
+                    <!-- Edit and Delete Icons (Right) -->
+                    <div>
+                        <a asp-action="Edit" asp-route-id="@task.Id" class="card-link text-primary">
+                            <i class="fa-solid fa-pen-to-square"></i>
+                        </a>
+                        <a href="#" class="card-link delete-button text-danger" data-task-id="@task.Id">
+                            <i class="fa-solid fa-trash"></i>
+                        </a>
+                    </div>
                 </div>
 
-                <div class="d-flex mt-3 justify-content-end">
-                    <a asp-action="Edit" asp-route-id="@task.Id" class="card-link text-primary">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </a>
-                    <!--<a asp-action="Delete" asp-route-id="@task.Id" class="card-link text-danger">
-                        <i class="fa-solid fa-trash"></i>
-                    </a>
-                            -->
-                    <a href="#" class="card-link delete-button text-danger" data-task-id="@task.Id"> <i class="fa-solid fa-trash"></i></a>
-
-                </div>
             </div>
         </div>
     }
 }
+
+ 
+ 

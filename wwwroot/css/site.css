@@ -53,7 +53,7 @@ body {
     position: fixed;
     top: 0;
     left: 0;
-    width: 280px;
+    width: 200px;
     height: 100%;
     background: var(--light);
     z-index: 2000;
@@ -179,8 +179,8 @@ body {
 /* CONTENT */
 #content {
     position: relative;
-    width: calc(100% - 280px);
-    left: 280px;
+    width: calc(100% - 200px);
+    left: 200px;
     transition: .3s ease;
 }
 
@@ -194,7 +194,7 @@ body {
 
 /* NAVBAR */
 #content nav {
-    height: 56px;
+    height: 70px;
     background: var(--light);
     padding: 0 24px;
     display: flex;
@@ -402,9 +402,9 @@ body {
 
     #content main .box-info {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        grid-gap: 24px;
+        grid-template-columns: repeat(4, 1fr);
         margin-top: 36px;
+        grid-gap: 26px;
     }
 
         #content main .box-info li {
@@ -412,8 +412,8 @@ body {
             background: var(--light);
             border-radius: 20px;
             display: flex;
+            grid-gap: 26px;
             /*  align-items: center;*/
-            grid-gap: 24px;
         }
 
             #content main .box-info li .fa-solid {
@@ -455,140 +455,27 @@ body {
                 color: var(--dark);
             }
 
+/* Custom button style */
+.custom-btn {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    color: #007bff; /* Primary color for text and icon */
+    border-color: #007bff; /* Primary color for border */
+    transition: all 0.3s ease; /* Smooth transition for color change */
+}
 
-
-
-
-    #content main .table-data {
-        display: flex;
-        flex-wrap: wrap;
-        grid-gap: 24px;
-        margin-top: 24px;
-        width: 100%;
-        color: var(--dark);
+    /* Change text, icon, and border to white on hover */
+    .custom-btn:hover {
+        color: white; /* Change text to white */
+        border-color: white; /* Change border to white */
     }
 
-        #content main .table-data > div {
-            border-radius: 20px;
-            background: var(--light);
-            padding: 24px;
-            overflow-x: auto;
+        /* Change icon color to white on hover */
+        .custom-btn:hover i {
+            color: white; /* Change icon to white */
         }
 
-        #content main .table-data .head {
-            display: flex;
-            align-items: center;
-            grid-gap: 16px;
-            margin-bottom: 24px;
-        }
-
-            #content main .table-data .head h3 {
-                margin-right: auto;
-                font-size: 24px;
-                font-weight: 600;
-            }
-
-            #content main .table-data .head .bx {
-                cursor: pointer;
-            }
-
-        #content main .table-data .order {
-            flex-grow: 1;
-            flex-basis: 500px;
-        }
-
-            #content main .table-data .order table {
-                width: 100%;
-                border-collapse: collapse;
-            }
-
-                #content main .table-data .order table th {
-                    padding-bottom: 12px;
-                    font-size: 13px;
-                    text-align: left;
-                    border-bottom: 1px solid var(--grey);
-                }
-
-                #content main .table-data .order table td {
-                    padding: 16px 0;
-                }
-
-                #content main .table-data .order table tr td:first-child {
-                    display: flex;
-                    align-items: center;
-                    grid-gap: 12px;
-                    padding-left: 6px;
-                }
-
-                #content main .table-data .order table td img {
-                    width: 36px;
-                    height: 36px;
-                    border-radius: 50%;
-                    object-fit: cover;
-                }
-
-                #content main .table-data .order table tbody tr:hover {
-                    background: var(--grey);
-                }
-
-                #content main .table-data .order table tr td .status {
-                    font-size: 10px;
-                    padding: 6px 16px;
-                    color: var(--light);
-                    border-radius: 20px;
-                    font-weight: 700;
-                }
-
-                    #content main .table-data .order table tr td .status.completed {
-                        background: var(--blue);
-                    }
-
-                    #content main .table-data .order table tr td .status.process {
-                        background: var(--yellow);
-                    }
-
-                    #content main .table-data .order table tr td .status.pending {
-                        background: var(--orange);
-                    }
-
-
-        #content main .table-data .todo {
-            flex-grow: 1;
-            flex-basis: 300px;
-        }
-
-            #content main .table-data .todo .todo-list {
-                width: 100%;
-            }
-
-                #content main .table-data .todo .todo-list li {
-                    width: 100%;
-                    margin-bottom: 16px;
-                    background: var(--grey);
-                    border-radius: 10px;
-                    padding: 14px 20px;
-                    display: flex;
-                    justify-content: space-between;
-                    align-items: center;
-                }
-
-                    #content main .table-data .todo .todo-list li .bx {
-                        cursor: pointer;
-                    }
-
-                    #content main .table-data .todo .todo-list li.completed {
-                        border-left: 10px solid var(--blue);
-                    }
-
-                    #content main .table-data .todo .todo-list li.not-completed {
-                        border-left: 10px solid var(--orange);
-                    }
-
-                    #content main .table-data .todo .todo-list li:last-child {
-                        margin-bottom: 0;
-                    }
-/* MAIN */
-/* CONTENT */
 
 
 
@@ -643,16 +530,6 @@ body {
         grid-template-columns: 1fr;
     }
 
-    #content main .table-data .head {
-        min-width: 420px;
-    }
 
-    #content main .table-data .order table {
-        min-width: 420px;
-    }
-
-    #content main .table-data .todo .todo-list {
-        min-width: 420px;
-    }
 }
 

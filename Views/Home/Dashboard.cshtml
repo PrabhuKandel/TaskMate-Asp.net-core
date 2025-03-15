@@ -1,55 +1,69 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
-
-
+	ViewData["Title"] = "Home Page";
 }
 
-<div class="head-title">
-	<div class="left">
-		<h1>Dashboard</h1>
-		<ul class="breadcrumb">
-			<li>
-				<a href="#">Dashboard</a>
-			</li>
-			<li><i class='bx bx-chevron-right'></i></li>
-			<li>
-				<a class="active" href="#">Home</a>
-			</li>
-		</ul>
-	</div>
+<div class="container ">
+    <!-- Dashboard Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">
+            <i class="fa-solid fa-chart-line me-2 text-primary"></i> Dashboard
+        </h1>
+    </div>
+
+    <!-- Task Overview Cards -->
+    <div class="row g-4">
+
+        <!-- Total Tasks -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 bg-light h-100">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fa-solid fa-list-check fs-2 text-primary me-3"></i>
+                    <div>
+                        <h5 class="mb-1 fw-semibold">Total Tasks</h5>
+                        <p class="mb-0 fs-4">@ViewBag.TotalTasks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pending Tasks -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 bg-light h-100">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fa-solid fa-hourglass-half fs-2 text-warning me-3"></i>
+                    <div>
+                        <h5 class="mb-1 fw-semibold">Pending Tasks</h5>
+                        <p class="mb-0 fs-4">@ViewBag.PendingTasks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Completed Tasks -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 bg-light h-100">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fa-solid fa-check-circle fs-2 text-success me-3"></i>
+                    <div>
+                        <h5 class="mb-1 fw-semibold">Completed Tasks</h5>
+                        <p class="mb-0 fs-4">@ViewBag.CompletedTasks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overdue Tasks -->
+        <div class="col-lg-3 col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 bg-light h-100">
+                <div class="card-body d-flex align-items-center">
+                    <i class="fa-solid fa-triangle-exclamation fs-2 text-danger me-3"></i>
+                    <div>
+                        <h5 class="mb-1 fw-semibold">Overdue Tasks</h5>
+                        <p class="mb-0 fs-4">@ViewBag.OverDueTasks</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
-
-<ul class="box-info">
-	<li>
-		<i class="fa-solid  fa-list-check"></i>
-		<span class="text">
-			<h3>Total Tasks</h3>
-			<p> @ViewBag.TotalTasks</p>
-		</span>
-	</li>
-	<li>
-		<i class="fa-solid fa-hourglass-half"></i>
-
-		<span class="text">
-			<h3>Pending Tasks</h3>
-			<p> @ViewBag.PendingTasks</p>
-		</span>
-	</li>
-	<li>
-		<i class="fa-solid fa-check-circle"></i>
-
-		<span class="text">
-			<h3>Completed Tasks</h3>
-			<p> @ViewBag.CompletedTasks</p>
-		</span>
-	</li>
-	<li>
-		<i class="fa-solid fa-triangle-exclamation"></i>
-
-		<span class="text">
-			<h3>OverDue Tasks</h3>
-			<p>Total Sales</p>
-		</span>
-	</li>
-</ul>
-	</div>

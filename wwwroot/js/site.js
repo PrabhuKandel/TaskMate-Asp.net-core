@@ -1,32 +1,37 @@
 ﻿
-const allSideMenu = document.querySelectorAll('#sidebar .side-menu.top li a');
-const brandText = document.querySelector('#sidebar .brand span');
 
-allSideMenu.forEach(item => {
-	const li = item.parentElement;
+    // Wait for the DOM to load
+	document.addEventListener("DOMContentLoaded", function() {
+        // Get current URL path
+        const currentUrl = window.location.pathname;
 
-	item.addEventListener('click', function () {
-		allSideMenu.forEach(i => {
-			i.parentElement.classList.remove('active');
-		})
-		li.classList.add('active');
-	})
-});
+	// Select all sidebar links
+	const menuItems = document.querySelectorAll('.side-menu a');
 
+        menuItems.forEach(item => {
+            // Check if the link's href matches the current URL
+            if (item.getAttribute('href') === currentUrl) {
+		// Remove active class from any previously active item
+		document.querySelector('.side-menu .active')?.classList.remove('active');
 
-
-
-// TOGGLE SIDEBAR
-const menuBar = document.querySelector('#content nav .bx.bx-menu');
-const sidebar = document.getElementById('sidebar');
-
-menuBar.addEventListener('click', function () {
-	sidebar.classList.toggle('hide');
-	brandText.classList.toggle('hide');
-})
+	// Add active class to the matching item
+	item.parentElement.classList.add('active');
+            }
+        });
+    });
 
 
+// Handle sidebar toggle after DOM is fully loaded
 
+    const menuBar = document.querySelector('#content nav .bx.bx-menu');
+    const sidebar = document.getElementById('sidebar');
+    const brandText = document.querySelector('#sidebar .brand span');
+  
+    menuBar.addEventListener('click', () => {
+        const isHidden = sidebar.classList.toggle('hide');
+        brandText.classList.toggle('hide');
+      
+    });
 
 
 

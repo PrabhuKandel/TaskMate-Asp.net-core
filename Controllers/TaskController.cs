@@ -21,14 +21,14 @@ namespace Task_Manager.Controllers
             _userManager = userManager;
         }
 
-        // GET: Task
-        public async Task<IActionResult> Index(Task_Manager.Models.TaskStatus ? status, Task_Manager.Models. TaskPriority? priority, string? dueDate)
+       
+        public async Task<IActionResult> Index(Task_Manager.Models.TaskStatus ? status, Task_Manager.Models. TaskPriority? priority, string? dueDate, string? search)
         {
             String userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
 
             if (userId == null)
             {
-                return Unauthorized(); // Ensure user is logged in
+                return Unauthorized();
             }
             await TimeAgoHelper.UpdateOverdueTasksAsync(_context, userId);
 
@@ -53,7 +53,11 @@ namespace Task_Manager.Controllers
                     ? tasks.OrderBy(t => t.DueDate)
                     : tasks.OrderByDescending(t => t.DueDate);
             }
-            //return Json(new { success = true, data = tasks.ToList() });
+            // Apply Search Filter (Search by Task Name)
+            if (!string.IsNullOrEmpty(search))
+            {
+                tasks = tasks.Where(t => t.Name.Contains(search));  // This filters by task name
+            }
 
             var taskDTOs = await tasks.Select(t => new TaskDto
             {
@@ -68,13 +72,13 @@ namespace Task_Manager.Controllers
 
            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
            {
-                return PartialView("_TaskListPartial", taskDTOs); // Return partial view for AJAX
+                return PartialView("_TaskListPartial", taskDTOs); 
             }
             return View(taskDTOs);
 
         }
 
-        // GET: Task/Details/5
+   
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -84,6 +88,8 @@ namespace Task_Manager.Controllers
 
             var task = await _context.Tasks
                 .FirstOrDefaultAsync(m => m.Id == id);
+            task.CreatedAt = task.CreatedAt.ToLocalTime();
+            task.DueDate = task.DueDate.ToLocalTime();
             if (task == null)
             {
                 return NotFound();
@@ -92,28 +98,24 @@ namespace Task_Manager.Controllers
             return View(task);
         }
 
-        // GET: Task/Create
+    
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Task/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+     
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Task_Manager.Models.Task task)
         {
-            // ✅ Assign UserId internally
+         
             task.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
 
 
-            //task.CreatedAt = DateTime.SpecifyKind(task.CreatedAt, DateTimeKind.Utc);
-            //task.DueDate = DateTime.SpecifyKind(task.DueDate, DateTimeKind.Utc);
-            // If the times are already in Asia/Kathmandu time, convert them to UTC before saving.
-            task.CreatedAt = task.CreatedAt.ToUniversalTime();  // Convert to UTC
-            task.DueDate = task.DueDate.ToUniversalTime();      // Convert to UTC
+ 
+            task.CreatedAt = task.CreatedAt.ToUniversalTime(); 
+            task.DueDate = task.DueDate.ToUniversalTime();     
 
 
             ModelState.Remove(nameof(task.UserId));
@@ -130,7 +132,7 @@ namespace Task_Manager.Controllers
         }
 
 
-        // GET: Task/Edit/5
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -154,9 +156,7 @@ namespace Task_Manager.Controllers
             return View(task);
         }
 
-        // POST: Task/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id,  Task_Manager.Models.Task task)
@@ -167,10 +167,9 @@ namespace Task_Manager.Controllers
             }
 
             task.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            // If the times are already in Asia/Kathmandu time, convert them to UTC before saving.
-            task.CreatedAt = task.CreatedAt.ToUniversalTime();  // Convert to UTC
-            task.DueDate = task.DueDate.ToUniversalTime();      // Convert to UTC
-
+           
+            task.CreatedAt = task.CreatedAt.ToUniversalTime();  
+            task.DueDate = task.DueDate.ToUniversalTime();    
 
 
             if (!ModelState.IsValid)

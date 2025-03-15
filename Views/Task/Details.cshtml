@@ -1,54 +1,69 @@
 ﻿@model Task_Manager.Models.Task
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Task Details";
 }
 
-<h1>Details</h1>
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary">
+        <i class="fa-solid fa-clipboard-list me-2"></i> Task Details
+    </h2>
 
-<div>
-    <h4>Task</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Priority)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Priority)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DueDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DueDate)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <div class="card rounded-4">
+        <div class="card-body">
+            <h4 class="card-title text-secondary mb-4">
+                <i class="fa-solid fa-info-circle me-2"></i> Task Information
+            </h4>
+
+            <dl class="row">
+                <dt class="col-sm-3 fw-bold">
+                    <i class="fa-solid fa-heading me-2"></i> Task Name:
+                </dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Name)</dd>
+
+                <dt class="col-sm-3 fw-bold">
+                    <i class="fa-solid fa-file-alt me-2"></i> Description:
+                </dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.Description)</dd>
+
+                <dt class="col-sm-3 fw-bold">
+                    <i class="fa-solid fa-tasks me-2"></i> Status:
+                </dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.Status == Task_Manager.Models.TaskStatus.Completed ? "bg-success" : "bg-warning")">
+                        @Html.DisplayFor(model => model.Status)
+                    </span>
+                </dd>
+
+                <dt class="col-sm-3 fw-bold">
+                    <i class="fa-solid fa-flag me-2"></i> Priority:
+                </dt>
+                <dd class="col-sm-9">
+                    <span class="badge @(Model.Priority == Task_Manager.Models.TaskPriority.High ? "bg-danger" : Model.Priority == Task_Manager.Models.TaskPriority.Low ? "bg-success" : "bg-warning")">
+                        @Html.DisplayFor(model => model.Priority)
+                    </span>
+                </dd>
+
+                <dt class="col-sm-3 fw-bold">
+                    <i class="fa-solid fa-calendar-plus me-2"></i> Created At:
+                </dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.CreatedAt)</dd>
+
+                <dt class="col-sm-3 fw-bold">
+                    <i class="fa-solid fa-calendar-check me-2"></i> Due Date:
+                </dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.DueDate)</dd>
+            </dl>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fa-solid fa-arrow-left me-2"></i> Back to List
+            </a>
+
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">
+                <i class="fa-solid fa-edit me-2"></i> Edit Task
+            </a>
+        </div>
+    </div>
 </div>

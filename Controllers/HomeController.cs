@@ -44,9 +44,11 @@ namespace Task_Manager.Controllers
             var totalTasks = await _context.Tasks. Where(t => t.UserId == userId).CountAsync(); //toal tasks
             var pendingTasks = await _context.Tasks.CountAsync(t => t.UserId == userId && t.Status == Task_Manager.Models.TaskStatus.Pending); // Pending tasks
             var completedTasks = await _context.Tasks.CountAsync(t => t.UserId == userId && t.Status == Task_Manager.Models.TaskStatus.Completed);
+            var overdueTasks = await _context.Tasks.CountAsync(t => t.UserId == userId && t.Status == Task_Manager.Models.TaskStatus.Overdue);
             ViewBag.TotalTasks = totalTasks;
             ViewBag.PendingTasks = pendingTasks;
             ViewBag.CompletedTasks = completedTasks;
+            ViewBag.OverDueTasks = overdueTasks;
 
             return View();
 
